@@ -8,6 +8,7 @@ import sys
 import yaml
 
 from flask import Flask, request
+from jinja2 import Environment, FileSystemLoader
 
 
 app_yaml = '''# Application Configuration File
@@ -67,6 +68,7 @@ def cmd_create(args):
 def cmd_run_server(args):
     app_path = path.abspath(args.path)
     yaml_path = path.join(app_path, 'app.yaml')
+    scripts_path = path.join(app_path, 'scripts')
     try:
         print 'Loading %s' % yaml_path
         config = yaml.load(open(yaml_path, 'r').read())
@@ -74,9 +76,13 @@ def cmd_run_server(args):
         print 'Error reading %s' % yaml_path
         sys.exit(2)
 
-    def dispatch(*args, **kwargs):
-        print args, kwargs
-        pass
+    jinja_env = Environment(
+        loader=FileSystemLoader(scripts_path),
+        extensions=['pyjade.ext.jinja.PyJadeExtension']
+    )
+    def dispatch(**kwargs):
+        template = jinja_env.get_template(kwargs['_sdk_template_'])
+        return template.render(**kwargs)
 
     app = Flask(__name__)
     i = 0
@@ -84,6 +90,7 @@ def cmd_run_server(args):
         rule = route['rule']
         endpoint = 'dispatch_%s' % str(i)
         defaults = compile_defaults(route.get('data', []), app_path)
+        defaults['_sdk_template_'] = route['script']
         app.add_url_rule(
             rule,
             endpoint,
