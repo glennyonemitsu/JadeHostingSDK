@@ -6,10 +6,10 @@ This is a prototype SDK for a jade programming environment. This tool should ena
 ## Basic usage
 
 ```
-\# help output
+# help output
 $ python manager.py -h
 $ python manager.py create -p test_project
-\# do some coding
+# do some coding
 $ python manager.py run_server -p test_project
 ```
 
