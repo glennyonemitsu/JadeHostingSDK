@@ -13,13 +13,15 @@ from jinja2 import Environment, FileSystemLoader
 
 app_yaml = '''# Application Configuration File
 
-sdk_version: 1
+# not used yet
+api_access_key:
+api_secret_key:
 
 ####################
 # Routing
 ####################
 # Routes are an array of mappings. The bare minimum of each mapping are the
-# "route" and "script" keys. An optional "data" key should point to the 
+# "rule" and "script" keys. An optional "data" key should point to the 
 # file of the yaml or json data file in the data/ directory. If an array of
 # files are given, it will load in sequence and each succeeding file will 
 # override any existing keys. You can mix data formats.
