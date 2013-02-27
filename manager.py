@@ -1,5 +1,6 @@
 import argparse 
 import json
+import logging
 import os
 import os.path as path
 import sqlite3
@@ -10,6 +11,11 @@ import yaml
 from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 
+
+conlog = logging.StreamHandler()
+logger = logging.getLogger('console')
+logger.addHandler(conlog)
+logger.setLevel(logging.INFO)
 
 app_yaml = '''# Application Configuration File
 
@@ -43,10 +49,10 @@ def cmd_create(args):
     sqlite_location = path.join(location, '.cms.db')
     yaml_location = path.join(location, 'app.yaml')
     if path.exists(location):
-        print 'Directory %s already exists' % location
+        logger.error('Directory %s already exists' % location)
         sys.exit(1)
 
-    print 'Creating project'
+    logger.info('Creating project')
     paths = (
         ('',),
         ('static',),
@@ -58,10 +64,10 @@ def cmd_create(args):
     )
     for p in paths:
         new_path = path.join(location, *p)
-        print 'Creating directory %s' % new_path
+        logger.info('Creating directory %s' % new_path)
         os.mkdir(new_path)
 
-    print 'Creating blank project file %s' % yaml_location
+    logger.info('Creating blank project file %s' % yaml_location)
     with open(yaml_location, 'w') as app:
         app.write(app_yaml)
     os.chmod(yaml_location, stat.S_IWUSR | stat.S_IRUSR)
@@ -72,10 +78,10 @@ def cmd_run_server(args):
     yaml_path = path.join(app_path, 'app.yaml')
     scripts_path = path.join(app_path, 'scripts')
     try:
-        print 'Loading %s' % yaml_path
+        logger.info('Loading %s' % yaml_path)
         config = yaml.load(open(yaml_path, 'r').read())
     except IOError:
-        print 'Error reading %s' % yaml_path
+        logger.error('Error reading %s' % yaml_path)
         sys.exit(2)
 
     jinja_env = Environment(
@@ -84,6 +90,10 @@ def cmd_run_server(args):
     )
     def dispatch(**kwargs):
         template = jinja_env.get_template(kwargs['_sdk_template_'])
+        kwargs['REQ'] = request
+        kwargs['GET'] = request.args
+        kwargs['POST'] = request.form
+        kwargs['COOKIES'] = request.cookies
         return template.render(**kwargs)
 
     app = Flask(__name__)
@@ -121,8 +131,7 @@ def compile_defaults(files, app_path):
                 elif file_type == 'yaml':
                     file_data = yaml.load(fh.read())
         except:
-            print 'Error reading data file %s' % file_path
-            print sys.exc_info()[0]
+            logger.error('Error reading data file %s' % file_path)
         data.update(file_data)    
     return data
 
