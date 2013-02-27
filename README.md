@@ -13,13 +13,16 @@ $ python manager.py run_server -p test_project
 
 ## Project files
 In directory test_project you will have the following directories:
+
 - test_project/data
 - test_project/scripts
 - test_project/static
 - test_project/static/css
 - test_project/static/img
 - test_project/static/js
+
 And the file:
+
 - test_project/app.yaml
 
 ### app.yaml 
