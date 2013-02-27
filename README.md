@@ -1,16 +1,17 @@
-JadeHostingSDK
-==============
+# Jade Hosting SDK
 
-This is a prototype SDK for a jade programming environment. This tool should enable the user to quickly setup a Jade environment and removing any needs for non-web programming languages such as python or ruby.
-
+This is an SDK for a Jade powered website environment. This tool should enable the user to quickly setup a Jade environment and removing any needs for non-web programming languages such as python or ruby.
+Jade can help people be incredibly productive, but the cost to learn how to implement it correctly for a site is a real hurdle to many who do not use it regularly. As a result people do not give Jade a chance because a "Hello, World!" example takes longer than the 30 seconds it would take in their native environment.
+The main goal for this SDK is to make it as quick and painless as possible to begin making sites in Jade.
+ 
 ## Basic usage
 
 ```
 # help output
-$ python manager.py -h
-$ python manager.py create -p test_project
+$ python manager.py --help
+$ python manager.py create --path test_project
 # do some coding
-$ python manager.py run_server -p test_project
+$ python manager.py run_server --path test_project
 ```
 
 ## Project files
@@ -56,3 +57,6 @@ routes:
 ```
 
 All static assets such as css and png files are to be in the static/ directory. Any url prefixed with /static/ will directly serve these files.
+
+## Disclaimer
+This is still alpha quality. Meaning features are rapidly experimented with and even removed based on user feedback. 
