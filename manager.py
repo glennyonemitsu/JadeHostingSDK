@@ -8,7 +8,7 @@ import stat
 import sys
 import yaml
 
-from flask import Flask, request
+from flask import Flask, request, url_for, send_from_directory
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -77,12 +77,16 @@ def cmd_run_server(args):
     app_path = path.abspath(args.path)
     yaml_path = path.join(app_path, 'app.yaml')
     scripts_path = path.join(app_path, 'scripts')
+    static_path = path.join(app_path, 'static')
     try:
         logger.info('Loading %s' % yaml_path)
         config = yaml.load(open(yaml_path, 'r').read())
     except IOError:
         logger.error('Error reading %s' % yaml_path)
         sys.exit(2)
+    if 'routes' not in config:
+        logger.error('Routes not specified in app.yaml')
+        sys.exit(3)
 
     jinja_env = Environment(
         loader=FileSystemLoader(scripts_path),
@@ -95,6 +99,9 @@ def cmd_run_server(args):
         kwargs['POST'] = request.form
         kwargs['COOKIES'] = request.cookies
         return template.render(**kwargs)
+
+    def static(filename):
+        return send_from_directory(static_path, filename)
 
     app = Flask(__name__)
     i = 0
@@ -110,6 +117,7 @@ def cmd_run_server(args):
             defaults=defaults
         )
         i += 1
+    app.add_url_rule('/static/<path:filename>', 'static', static)
 
     host = ''.join(args.address.split(':')[:-1])
     port = int(args.address.split(':')[-1])
