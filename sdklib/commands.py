@@ -1,5 +1,6 @@
 import os
 import os.path as path
+import shutil
 import stat
 import sys
 
@@ -7,7 +8,7 @@ from flask import Flask, request, url_for, send_from_directory
 from jinja2 import Environment, FileSystemLoader
 import yaml
 
-from sdklib import app_yaml, logger
+from sdklib import app_yaml, logger, skeleton_path
 
 
 def create(args):
@@ -32,10 +33,11 @@ def create(args):
         os.mkdir(new_path)
 
     yaml_location = path.join(location, 'app.yaml')
-    logger.info('Creating blank project file %s' % yaml_location)
-    with open(yaml_location, 'w') as app:
-        app.write(app_yaml)
-    os.chmod(yaml_location, stat.S_IWUSR | stat.S_IRUSR)
+    yaml_src = path.join(skeleton_path, 'app.yaml')
+    yaml_dest = path.join(location, 'app.yaml')
+    logger.info('Creating blank project file %s' % yaml_dest)
+    shutil.copy(yaml_src, yaml_dest)
+    os.chmod(yaml_dest, stat.S_IWUSR | stat.S_IRUSR)
 
 
 def run_server(args):
