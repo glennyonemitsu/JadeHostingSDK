@@ -8,7 +8,7 @@ from flask import Flask, request, url_for, send_from_directory
 from jinja2 import Environment, FileSystemLoader
 import yaml
 
-from sdklib import app_yaml, logger, skeleton_path
+from sdklib import logger, skeleton_path
 
 
 def create(args):
@@ -32,7 +32,6 @@ def create(args):
         logger.info('Creating directory %s' % new_path)
         os.mkdir(new_path)
 
-    yaml_location = path.join(location, 'app.yaml')
     yaml_src = path.join(skeleton_path, 'app.yaml')
     yaml_dest = path.join(location, 'app.yaml')
     logger.info('Creating blank project file %s' % yaml_dest)
