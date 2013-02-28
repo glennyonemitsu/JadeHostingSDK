@@ -8,6 +8,7 @@ sub_parsers = parser.add_subparsers(help='Sub commands for the manager script')
 
 create_parser = sub_parsers.add_parser('create', help='Create a new project at specified directory')
 create_parser.add_argument('-p', '--path', dest='path', metavar='PATH')
+create_parser.add_argument('-b', '--bootstrap', action='store_true', help='Include the Twitter Bootstrap framework')
 create_parser.set_defaults(callback=commands.create)
 
 server_parser = sub_parsers.add_parser('run_server', help='Run server')

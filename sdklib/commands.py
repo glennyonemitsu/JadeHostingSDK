@@ -18,19 +18,33 @@ def create(args):
         sys.exit(1)
 
     logger.info('Creating project')
-    paths = (
-        ('',),
-        ('static',),
-        ('static', 'img'),
-        ('static', 'css'),
-        ('static', 'js'),
-        ('templates',),
-        ('data',)
-    )
+    if args.bootstrap:
+        paths = (
+            ('',),
+            ('data',)
+        )
+    else:
+        paths = (
+            ('',),
+            ('static',),
+            ('static', 'img'),
+            ('static', 'css'),
+            ('static', 'js'),
+            ('templates',),
+            ('data',)
+        )
     for p in paths:
         new_path = path.join(location, *p)
         logger.info('Creating directory %s' % new_path)
         os.mkdir(new_path)
+
+    if args.bootstrap:
+        logger.info('Copying Twitter Bootstrap framework files')
+        paths_copy = ('static', 'templates')
+        for p in paths_copy:
+            new_path = path.join(location, p)
+            bootstrap_path = path.join(skeleton_path, 'bootstrap', p)
+            shutil.copytree(bootstrap_path, new_path)
 
     yaml_src = path.join(skeleton_path, 'app.yaml')
     yaml_dest = path.join(location, 'app.yaml')
