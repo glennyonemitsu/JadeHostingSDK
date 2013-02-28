@@ -5,4 +5,4 @@ routes:
 # site only respond to that and nothing else. A request to / will run the
 # jade template located in scripts/hello.jade
   - rule: /
-    script: hello.jade
+    template: hello.jade
