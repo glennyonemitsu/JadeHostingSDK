@@ -20,7 +20,7 @@ $ python manager.py run_server --path test_project
 In directory test_project you will have the following directories:
 
 - test_project/data
-- test_project/scripts
+- test_project/templates
 - test_project/static
 - test_project/static/css
 - test_project/static/img
@@ -52,12 +52,12 @@ Some completed routes are shown below:
 ```
 routes:
   - rule: /
-    script: home.jade
+    template: home.jade
   - rule: /about-us/
-    script: about-us.jade
+    template: about-us.jade
     data: team.yaml
   - rule: /portfolio/
-    script: portfolio.jade
+    template: portfolio.jade
     data: [projects.json, clients.yaml]
 ```
 
