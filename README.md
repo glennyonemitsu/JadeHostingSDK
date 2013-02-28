@@ -12,6 +12,9 @@ their native environment.
 
 The main goal for this SDK is to make it as quick and painless as possible 
 to begin making sites in Jade.
+
+If you are new to Jade there is also a site dedicated to helping you 
+[learn the features and syntax of Jade](http://www.learnjade.com).
  
 ## Basic usage
 
