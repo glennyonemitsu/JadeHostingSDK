@@ -39,11 +39,11 @@ And the file:
 
 If you run `manager.py create` with the `--bootstrap` flag, your static 
 directory will have all the files from the Twitter Bootstrap framework 
-included. The templates/base.jade file has some skeleton code to include 
+included. The `templates/base.jade` file has some skeleton code to include 
 what you need to get started.
 
 ### app.yaml 
-app.yaml contains commented out code. In a nutshell you specify the route 
+`app.yaml` contains commented out code. In a nutshell you specify the route 
 rule and the jade file associated with that rule. The following are a few 
 rules you can use:
 
@@ -53,19 +53,19 @@ rules you can use:
 /members/<member_name>/
 ```
 
-In that last route the variable "member_name" will be available in your 
+In that last route the variable `member_name` will be available in your 
 jade file.
 
 Each route can have one or more data files. These are static text files in 
-the data/ directory that are either json or yaml format. The data/ 
+the `data/` directory that are either json or yaml format. The `data/ `
 directory does not need to be specified. Each succeeding data file with 
 matching keys will overwrite keys in the preceeding file. 
 
 Due to technical limitations, variables from route rules such as 
-"member_name" above will be overwritten by any data files with the same 
+`member_name` above will be overwritten by any data files with the same 
 key.
 
-In the data/ directory just create files with a .json or .yaml extension 
+In the `data/` directory just create files with a .json or .yaml extension 
 and the SDK will properly load in the correct format. Due to json's strict 
 formatting rules it is suggested to use the yaml format when possible.
 
@@ -83,8 +83,8 @@ routes:
     data: [projects.json, clients.yaml]
 ```
 
-All static assets such as css and png files are to be in the static/ 
-directory. Any url prefixed with /static/ will directly serve these files.
+All static assets such as css and png files are to be in the `static/` 
+directory. Any url prefixed with `/static/` will directly serve these files.
 
 ## Disclaimer
 This is still alpha quality. Meaning features are rapidly experimented 
