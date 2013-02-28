@@ -93,7 +93,13 @@ def cmd_run_server(args):
         extensions=['pyjade.ext.jinja.PyJadeExtension']
     )
     def dispatch(**kwargs):
+        for k, v in kwargs.iteritems():
+            if isinstance(v, unicode):
+                kwargs[k] = str(v)
         template = jinja_env.get_template(kwargs['_sdk_template_'])
+        data = compile_defaults(kwargs['_sdk_data_'], app_path)
+        for k in data:
+            kwargs.setdefault(k, data[k])
         kwargs['REQ'] = request
         kwargs['GET'] = request.args
         kwargs['POST'] = request.form
@@ -108,8 +114,9 @@ def cmd_run_server(args):
     for route in config['routes']:
         rule = route['rule']
         endpoint = 'dispatch_%s' % str(i)
-        defaults = compile_defaults(route.get('data', []), app_path)
+        defaults = {}
         defaults['_sdk_template_'] = route['script']
+        defaults['_sdk_data_'] = route.get('data', [])
         app.add_url_rule(
             rule,
             endpoint,
