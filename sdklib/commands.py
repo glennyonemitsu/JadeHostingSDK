@@ -58,7 +58,7 @@ def run_server(args):
         loader=FileSystemLoader(templates_path),
         extensions=['pyjade.ext.jinja.PyJadeExtension']
     )
-    def dispatch(**kwargs):
+    def _dispatch_rule(**kwargs):
         for k, v in kwargs.iteritems():
             if isinstance(v, unicode):
                 kwargs[k] = str(v)
@@ -72,6 +72,28 @@ def run_server(args):
         kwargs['COOKIES'] = request.cookies
         return template.render(**kwargs)
 
+    def _dispatch_static(filename):
+        return send_from_directory(static_path, filename)
+
+    def _compile_defaults(files, app_path):
+        if not isinstance(files, list):
+            files = [files]
+        data = {}
+        for f in files:
+            try:
+                file_path = path.join(app_path, 'data', f)
+                file_type = file_path.split('.')[-1]
+                file_data = {}
+                with open(file_path, 'r') as fh:
+                    if file_type == 'json':
+                        file_data = json.load(fh)
+                    elif file_type == 'yaml':
+                        file_data = yaml.load(fh.read())
+            except:
+                logger.error('Error reading data file %s' % file_path)
+            data.update(file_data)    
+        return data
+
     app = Flask(__name__)
     i = 0
     for route in config['routes']:
@@ -83,7 +105,7 @@ def run_server(args):
         app.add_url_rule(
             rule,
             endpoint,
-            dispatch,
+            _dispatch_rule,
             defaults=defaults
         )
         i += 1
@@ -94,25 +116,4 @@ def run_server(args):
     app.run(host=host, port=port, debug=True)
 
 
-def _dispatch_static(filename):
-    return send_from_directory(static_path, filename)
 
-
-def _compile_defaults(files, app_path):
-    if not isinstance(files, list):
-        files = [files]
-    data = {}
-    for f in files:
-        try:
-            file_path = path.join(app_path, 'data', f)
-            file_type = file_path.split('.')[-1]
-            file_data = {}
-            with open(file_path, 'r') as fh:
-                if file_type == 'json':
-                    file_data = json.load(fh)
-                elif file_type == 'yaml':
-                    file_data = yaml.load(fh.read())
-        except:
-            logger.error('Error reading data file %s' % file_path)
-        data.update(file_data)    
-    return data
