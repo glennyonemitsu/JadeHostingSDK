@@ -1,0 +1,18 @@
+extends base
+
+block content
+    h1 ACME Company, Inc.   
+    .lead
+        p.
+            ACME Company is the second best firm at reviewing fake company 
+            profiles. With over 37 years experience reading about made up 
+            companies you can rely on us to read something that doesn't even
+            matter and tell you, "yes this looks fake."
+    h2 The Team
+    .row
+        each slug in member_list
+            .span6
+                h3
+                    a(href='/team/#{slug}/') #{members[slug]['name']}
+                p: strong= members[slug]['position']
+                .bio= members[slug]['bio'][0]

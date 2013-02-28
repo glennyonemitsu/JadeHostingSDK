@@ -1,0 +1,11 @@
+extends base
+
+member = members[name]
+
+block content
+    h1= member['name']
+    each bio, i in member.bio
+        if i == 0
+            p.lead= bio
+        else
+            p= bio

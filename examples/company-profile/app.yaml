@@ -1,0 +1,13 @@
+# Company profile example
+#
+# This example uses a data file and integrates twitter's bootstrap 
+# framework. Features such as "extends" and "each" are used as well.
+
+
+routes:
+  - rule: /
+    template: home.jade
+    data: team.yaml
+  - rule: /team/<name>/
+    template: team-member.jade
+    data: team.yaml

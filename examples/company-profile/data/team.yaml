@@ -1,0 +1,107 @@
+members:
+
+    # In this example the slug is used to create the links. It is also used
+    # as a crude pointer to correct entry in the team members' detail 
+    # pages.
+
+    john-doe:
+        name: John Doe
+        position: President
+        # The bio is an array instead of a string due to limitations of 
+        # variable interpolation in the Jade templates. In other words, having 
+        # the string "p this is the bio" will NOT put the line in a paragraph 
+        # tag. With an array of strings (one string per p tag) we can do an 
+        # each loop in the jade template as "p= bio_string".
+        #
+        # The other option is to put in html directly in here. In that case it 
+        # would be one string instead of an array with multiple <p></p> as 
+        # needed.
+        bio: 
+          - Bacon ipsum dolor sit amet doner short ribs ribeye chuck ball tip 
+            strip steak hamburger filet mignon. Prosciutto pig ham, chuck 
+            chicken brisket short loin short ribs cow frankfurter. Pork chop 
+            venison turkey shoulder brisket ground round kielbasa pastrami 
+            capicola beef prosciutto bacon. Pancetta pork loin ham hock 
+            shoulder, meatloaf sirloin turkey pork chop t-bone chuck tongue 
+            spare ribs leberkas strip steak ball tip.
+          - Short loin brisket spare ribs swine drumstick. Rump pastrami pork 
+            loin meatloaf strip steak swine bresaola chuck. Jowl prosciutto 
+            ground round short ribs. Leberkas corned beef pancetta, shank 
+            meatloaf turducken drumstick sirloin pork chuck. Chicken meatball 
+            salami spare ribs tail, sausage bresaola pig. Short loin 
+            frankfurter andouille kielbasa doner pancetta. Chuck doner 
+            leberkas bresaola pancetta, t-bone boudin beef ribs pork chop 
+            jerky pastrami tenderloin tri-tip tongue turducken.
+          - Strip steak ham hock andouille tri-tip. Frankfurter leberkas 
+            turducken, strip steak rump beef flank. Jerky tongue andouille, 
+            ball tip doner shankle shoulder bresaola strip steak pig shank 
+            meatball. Tongue cow jowl salami ribeye filet mignon chicken pork 
+            belly. Boudin leberkas cow prosciutto beef ribs brisket swine 
+            sausage turducken.
+
+    jane-doe:
+        name: Jane Doe
+        position: CEO
+        bio: 
+          - Swine hamburger turducken short ribs tongue tenderloin strip steak 
+            beef ribs chuck pork chop sausage meatball. T-bone turducken filet 
+            mignon brisket, meatloaf prosciutto ground round pig capicola ball 
+            tip doner cow. Sirloin pastrami pig ground round salami tenderloin 
+            swine meatball. T-bone shoulder salami short loin chicken boudin. 
+            Ribeye sirloin tri-tip chicken, shank leberkas drumstick prosciutto 
+            strip steak meatball rump chuck.
+          - Short loin fatback chuck pastrami venison. Cow filet mignon ground 
+            round, ham tenderloin sausage pork chop sirloin biltong corned 
+            beef. Beef frankfurter t-bone bacon flank. Ball tip corned beef 
+            venison flank, bacon tongue sausage t-bone jerky pancetta. 
+            Frankfurter ball tip short ribs corned beef fatback. Filet mignon 
+            bresaola chuck, hamburger meatloaf swine pig doner pastrami rump 
+            sausage pork belly ball tip frankfurter.
+          - T-bone sirloin pork chop fatback brisket ground round chuck 
+            pastrami capicola beef ribeye salami andouille. Ball tip jowl 
+            pastrami, ham hock tri-tip filet mignon biltong drumstick ribeye 
+            kielbasa venison ham. Tail tenderloin spare ribs hamburger, flank 
+            pork pork loin boudin short ribs shank pancetta kielbasa leberkas. 
+            Biltong meatloaf t-bone, tail shank kielbasa beef ribs ham boudin. 
+            Beef tail biltong tri-tip. Ball tip pancetta biltong leberkas 
+            chicken frankfurter.
+
+    fido:
+        name: Fido the Dog
+        position: Company Mascot
+        bio: 
+          - Filet mignon doner jowl, strip steak venison ham hock short 
+            ribs tail ground round boudin bresaola. Turkey beef ribs cow, 
+            ribeye pancetta tail shank short ribs strip steak pork chop. 
+            Biltong shank turkey, doner short ribs hamburger rump beef 
+            ribs salami jerky chicken pork meatloaf. Pork loin short ribs 
+            shankle tri-tip biltong capicola. Jowl shoulder bresaola 
+            biltong tenderloin frankfurter.
+          - Ball tip brisket shank beef pork. Pork loin ribeye leberkas, 
+            chuck bresaola turducken doner sausage chicken ham beef. Ball 
+            tip shank swine pork belly prosciutto pork fatback meatball 
+            chuck jerky. Corned beef shankle flank bacon, spare ribs 
+            tongue boudin tri-tip brisket leberkas doner rump salami. Pork 
+            tongue corned beef ham hock. Short loin ribeye jerky spare 
+            ribs pastrami pork chop.
+          - Rump hamburger pancetta, swine ribeye andouille prosciutto 
+            short ribs. Kielbasa shank brisket sirloin ham hock, shankle 
+            pork belly hamburger chicken pork loin meatloaf jowl meatball 
+            andouille strip steak. Pastrami andouille pork loin doner 
+            biltong bresaola sirloin beef ribs short loin brisket rump 
+            boudin. Filet mignon drumstick tongue jerky frankfurter pork 
+            kielbasa swine tail boudin prosciutto doner shank shankle. 
+          - Ball tip flank spare ribs sausage. Meatball filet mignon rump 
+            meatloaf, leberkas pork ground round kielbasa strip steak short 
+            loin. Doner sirloin cow, leberkas meatloaf jowl prosciutto 
+            frankfurter strip steak venison boudin meatball shoulder tongue 
+            short ribs.
+          - Shoulder kielbasa leberkas turducken tongue biltong. Pork chop 
+            ball tip hamburger, beef jerky fatback flank frankfurter pastrami. 
+
+# We use a list of member slugs repeated in this key, because if we want
+# to conveniently loop through members in an order we won't get it from
+# a mapping defined right above.
+
+member_list: ['john-doe', 'jane-doe', 'fido']
+
