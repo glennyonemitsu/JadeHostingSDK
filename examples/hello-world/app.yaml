@@ -3,6 +3,6 @@
 routes:
 # only one route is used which is the root page. The rule of / will make 
 # site only respond to that and nothing else. A request to / will run the
-# jade template located in scripts/hello.jade
+# jade template located in template/hello.jade
   - rule: /
     template: hello.jade

@@ -3,7 +3,6 @@
 # This example uses a data file and integrates twitter's bootstrap 
 # framework. Features such as "extends" and "each" are used as well.
 
-
 routes:
   - rule: /
     template: home.jade
