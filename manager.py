@@ -20,6 +20,10 @@ server_parser.add_argument(
 )
 server_parser.set_defaults(callback=commands.run_server)
 
+upload_parser = sub_parsers.add_parser('upload', help='Upload a new project at specified directory to the hosting account')
+upload_parser.add_argument('-p', '--path', dest='path', metavar='PATH')
+upload_parser.set_defaults(callback=commands.upload)
+
 args = parser.parse_args()
 args.callback(args)
 
