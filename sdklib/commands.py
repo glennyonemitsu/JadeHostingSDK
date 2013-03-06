@@ -1,4 +1,5 @@
 import base64
+from collections import OrderedDict
 from datetime import datetime
 import hashlib
 import hmac
@@ -7,12 +8,14 @@ import os
 import os.path as path
 import shutil
 import stat
+import StringIO
 import sys
 import urllib
 import urllib2
 
 from flask import Flask, request, url_for, send_from_directory
 from jinja2 import Environment, FileSystemLoader
+import requests
 import yaml
 
 from sdklib import logger, skeleton_path
@@ -173,10 +176,12 @@ def upload(args):
     app_json = json.dumps(app_data)
 
     try:
-        fields = _get_upload_fields(
+        form = _get_upload_form(
             yaml_data['api_access_key'], yaml_data['api_secret_key']
         )
-        print fields
+        logger.info('Uploading')
+        _upload_file(form, app_json)
+        logger.info('Upload complete')
     except urllib2.HTTPError, e:
         #if e.code == 404:
         logger.error('API call returned a 404. Please check api '
@@ -206,7 +211,7 @@ def _date_header():
     header = dt.strftime('%a, %d %b %y %H:%M:%S GMT')
     return header
 
-def _get_upload_fields(access_key, secret_key):
+def _get_upload_form(access_key, secret_key):
     api_verb = 'GET'
     api_content = ''
     api_date = _date_header()
@@ -222,4 +227,15 @@ def _get_upload_fields(access_key, secret_key):
     req.add_header('Date', api_date)
     rsp = urllib2.urlopen(req)
     content = rsp.read()
-    print rsp.info()
+    data = json.loads(content)
+    return data
+
+def _upload_file(form, file_data):
+    data = { f['name']: f['value'] for f in form['fields'] }
+    file_data_handler = StringIO.StringIO(file_data)
+    res = requests.post(
+        form['action'], 
+        data=data, 
+        files={'file': ('0', file_data_handler)}
+    )
+    return res
