@@ -1,4 +1,5 @@
 import base64
+import binascii
 from collections import OrderedDict
 from datetime import datetime
 import hashlib
@@ -161,11 +162,19 @@ def upload(args):
         if dn.startswith('templates') or \
            dn.startswith('data') or \
            dn.startswith('static'):
+            if dn.startswith('templates'):
+                key = 'templates'
+            if dn.startswith('data'):
+                key = 'data'
+            if dn.startswith('static'):
+                key = 'static'
+            payload.setdefault(key, {})
             for filename in files:
-                filepath = path.join(dn, filename)
+                filepath = path.join(dn, filename)[len(key)+1:]
                 fullfilepath = path.join(dirname, filename)
-                payload[filepath] = _file_data(fullfilepath)
+                payload[key][filepath] = _file_data(fullfilepath)
 
+    payload['application_config'] = base64.b64encode(json.dumps(yaml_data))
     payload_json = json.dumps(payload)
     hmac_obj = hmac.new(yaml_data['api_secret_key'], payload_json)
     app_data = {}
@@ -176,14 +185,10 @@ def upload(args):
     app_json = json.dumps(app_data)
 
     try:
-        form = _get_upload_form(
-            yaml_data['api_access_key'], yaml_data['api_secret_key']
-        )
         logger.info('Uploading')
-        _upload_file(form, app_json)
+        res = _upload_file(yaml_data, payload_json)
         logger.info('Upload complete')
     except urllib2.HTTPError, e:
-        #if e.code == 404:
         logger.error('API call returned a 404. Please check api '
                      'credentials in the app.yaml file.')
 
@@ -195,7 +200,10 @@ def _file_data(filename):
         return data64
 
 def _api_signature(verb, content, date, uri, secret):
-    msg = '\n'.join([verb, content, date, uri])
+    content_hash = ''
+    if content != '':
+        content_hash = _hash(content).hexdigest()
+    msg = '\n'.join([verb, content_hash, date, uri])
     signer = hmac.new(secret, msg, hashlib.sha1)
     signature = signer.digest()
     signature64 = base64.b64encode(signature)
@@ -211,31 +219,26 @@ def _date_header():
     header = dt.strftime('%a, %d %b %y %H:%M:%S GMT')
     return header
 
-def _get_upload_form(access_key, secret_key):
-    api_verb = 'GET'
-    api_content = ''
+def _upload_file(app_data, payload):
+    name = app_data['application_name']
+    endpoint = 'http://api.platters.com:8091/application/%s/' % name
+    access_key = app_data['api_access_key']
+    secret_key = app_data['api_secret_key']
+    api_verb = 'PUT'
+    api_content = payload
     api_date = _date_header()
-    api_uri = '/api/get-upload-fields/'
+    api_uri = '/application/%s/' % name
     api_signature = _api_signature(
         api_verb, api_content, api_date, api_uri, secret_key
     )
-    api_uri_full = 'http://glenn.platters.com:8090%s' % api_uri
-    authn_name = 'X-Authentication'
-    authn_value = 'PLATTERS %s:%s' % (access_key, api_signature)
-    req = urllib2.Request(api_uri_full)
-    req.add_header(authn_name, authn_value)
-    req.add_header('Date', api_date)
-    rsp = urllib2.urlopen(req)
-    content = rsp.read()
-    data = json.loads(content)
-    return data
-
-def _upload_file(form, file_data):
-    data = { f['name']: f['value'] for f in form['fields'] }
-    file_data_handler = StringIO.StringIO(file_data)
-    res = requests.post(
-        form['action'], 
-        data=data, 
-        files={'file': ('0', file_data_handler)}
-    )
+    headers = {
+        'Date': api_date,
+        'X-Authentication': '%s:%s' % (access_key, api_signature)
+    }
+    res = requests.put(endpoint, data=payload, headers=headers)
     return res
+
+def _hash(content):
+    h = hashlib.sha1()
+    h.update(content)
+    return h
