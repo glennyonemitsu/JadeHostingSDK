@@ -32,7 +32,7 @@ def create(args):
     if args.bootstrap:
         paths = (
             ('',),
-            ('data',)
+            ('content',)
         )
     else:
         paths = (
@@ -42,7 +42,7 @@ def create(args):
             ('static', 'css'),
             ('static', 'js'),
             ('templates',),
-            ('data',)
+            ('content',)
         )
     for p in paths:
         new_path = path.join(location, *p)
@@ -89,9 +89,9 @@ def run_server(args):
             if isinstance(v, unicode):
                 kwargs[k] = str(v)
         template = jinja_env.get_template(kwargs['__sdk_template__'])
-        data = _compile_defaults(kwargs['__sdk_data__'], app_path)
-        for k in data:
-            kwargs.setdefault(k, data[k])
+        content = _compile_defaults(kwargs['__sdk_content__'], app_path)
+        for k in content:
+            kwargs.setdefault(k, content[k])
         kwargs['REQ'] = request
         kwargs['GET'] = request.args
         kwargs['POST'] = request.form
@@ -102,23 +102,24 @@ def run_server(args):
         return send_from_directory(static_path, filename)
 
     def _compile_defaults(files, app_path):
+        '''creates the default content dict to send to the jade template'''
         if not isinstance(files, list):
             files = [files]
-        data = {}
+        content = {}
         for f in files:
             try:
-                file_path = path.join(app_path, 'data', f)
+                file_path = path.join(app_path, 'content', f)
                 file_type = file_path.split('.')[-1]
-                file_data = {}
+                file_content = {}
                 with open(file_path, 'r') as fh:
                     if file_type == 'json':
-                        file_data = json.load(fh)
+                        file_content = json.load(fh)
                     elif file_type == 'yaml':
-                        file_data = yaml.load(fh.read())
+                        file_content = yaml.load(fh.read())
             except:
-                logger.error('Error reading data file %s' % file_path)
-            data.update(file_data)    
-        return data
+                logger.error('Error reading content file %s' % file_path)
+            content.update(file_content)    
+        return content
 
     app = Flask(__name__)
     i = 0
@@ -127,7 +128,7 @@ def run_server(args):
         endpoint = 'dispatch_%s' % str(i)
         defaults = {}
         defaults['__sdk_template__'] = route['template']
-        defaults['__sdk_data__'] = route.get('data', [])
+        defaults['__sdk_content__'] = route.get('content', [])
         app.add_url_rule(
             rule,
             endpoint,
@@ -146,7 +147,7 @@ def upload(args):
     app_path = path.abspath(args.path)
     yaml_path = path.join(app_path, 'app.yaml')
     templates_path = path.join(app_path, 'templates')
-    data_path = path.join(app_path, 'data')
+    content_path = path.join(app_path, 'content')
     static_path = path.join(app_path, 'static')
     
     yaml_data = yaml.load(open(yaml_path, 'r').read())
@@ -160,12 +161,12 @@ def upload(args):
     for dirname, subdirs, files in os.walk(app_path):
         dn = dirname[cut_start:]
         if dn.startswith('templates') or \
-           dn.startswith('data') or \
+           dn.startswith('content') or \
            dn.startswith('static'):
             if dn.startswith('templates'):
                 key = 'templates'
-            if dn.startswith('data'):
-                key = 'data'
+            if dn.startswith('content'):
+                key = 'content'
             if dn.startswith('static'):
                 key = 'static'
             payload.setdefault(key, {})
@@ -176,13 +177,6 @@ def upload(args):
 
     payload['application_config'] = base64.b64encode(json.dumps(yaml_data))
     payload_json = json.dumps(payload)
-    hmac_obj = hmac.new(yaml_data['api_secret_key'], payload_json)
-    app_data = {}
-    app_data['payload_version'] = 1
-    app_data['payload'] = payload_json
-    app_data['api_access_key'] = yaml_data['api_access_key']
-    app_data['signature'] = hmac_obj.hexdigest()
-    app_json = json.dumps(app_data)
 
     try:
         logger.info('Uploading')
