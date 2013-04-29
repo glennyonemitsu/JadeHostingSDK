@@ -1,3 +1,9 @@
+# The Jade Hosting SDK project moved to the Markup Hive SDK
+
+All new developments are now moved to the 
+[Markup Hive SDK](https://github.com/MarkupHive/MarkupHiveSDK).
+
+
 # Jade Hosting SDK
 
 This is an SDK for a Jade powered website environment. This tool should 
